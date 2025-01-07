@@ -1,0 +1,5 @@
+com\example\projectservice\controller\ProjectController.class
+com\example\projectservice\ProjectServiceApplication.class
+com\example\projectservice\repository\ProjectRepository.class
+com\example\projectservice\model\Project.class
+com\example\projectservice\service\ProjectService.class

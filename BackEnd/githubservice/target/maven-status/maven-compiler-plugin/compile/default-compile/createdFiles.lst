@@ -1,0 +1,5 @@
+com\example\githubservice\service\GitHubService.class
+com\example\githubservice\model\GitHubRepositoryEntity.class
+com\example\githubservice\controller\GitHubController.class
+com\example\githubservice\GitHubServiceApplication.class
+com\example\githubservice\repository\GitHubRepository.class

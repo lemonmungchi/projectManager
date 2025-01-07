@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "ConfigServerApplication",
+            "request": "launch",
+            "mainClass": "com.example.configserver.ConfigServerApplication",
+            "projectName": "configserver"
+        },
+        {
+            "type": "java",
+            "name": "GitHubServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.githubservice.GitHubServiceApplication",
+            "projectName": "githubservice"
+        },
+        {
+            "type": "java",
+            "name": "PDFServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.pdfservice.PDFServiceApplication",
+            "projectName": "pdfservice"
+        },
+        {
+            "type": "java",
+            "name": "ProjectServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.projectservice.ProjectServiceApplication",
+            "projectName": "projectservice"
+        },
+        {
+            "type": "java",
+            "name": "UserServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.userservice.UserServiceApplication",
+            "projectName": "userservice"
+        }
+    ]
+}
