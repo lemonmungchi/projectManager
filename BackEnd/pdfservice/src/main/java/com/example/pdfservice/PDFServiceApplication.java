@@ -1,0 +1,11 @@
+package com.example.pdfservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class PDFServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(PDFServiceApplication.class, args);
+    }
+}

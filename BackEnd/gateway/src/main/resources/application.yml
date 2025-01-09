@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: userservice
+          uri: lb://userservice
+          predicates:
+            - Path=/user/**
+        - id: projectservice
+          uri: lb://projectservice
+          predicates:
+            - Path=/project/**
+        - id: githubservice
+          uri: lb://githubservice
+          predicates:
+            - Path=/github/**
+        - id: pdfservice
+          uri: lb://pdfservice
+          predicates:
+            - Path=/pdf/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eurekaserver:8761/eureka/
+  instance:
+    prefer-ip-address: true

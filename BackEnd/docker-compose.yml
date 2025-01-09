@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  configserver:
+    build:
+      context: ./configserver
+    container_name: configserver
+    ports:
+      - "8888:8888"
+
+  eurekaserver:
+    build:
+      context: ./eurekaserver
+    container_name: eurekaserver
+    ports:
+      - "8761:8761"
+    depends_on:
+      - configserver
+
+  gateway:
+    build:
+      context: ./gateway
+    container_name: gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eurekaserver
+
+  userservice:
+    build:
+      context: ./userservice
+    container_name: userservice
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eurekaserver
+
+  projectservice:
+    build:
+      context: ./projectservice
+    container_name: projectservice
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eurekaserver
+
+  githubservice:
+    build:
+      context: ./githubservice
+    container_name: githubservice
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eurekaserver
+
+  pdfservice:
+    build:
+      context: ./pdfservice
+    container_name: pdfservice
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eurekaserver
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9092

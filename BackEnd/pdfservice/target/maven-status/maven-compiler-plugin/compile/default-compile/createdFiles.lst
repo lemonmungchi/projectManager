@@ -1,5 +1,5 @@
 com\example\pdfservice\repository\PDFRepository.class
-com\example\pdfservice\PDFServiceApplication.class
 com\example\pdfservice\service\PDFService.class
 com\example\pdfservice\controller\PDFController.class
+com\example\pdfservice\PDFServiceApplication.class
 com\example\pdfservice\model\PDFEntity.class

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projectservice
+  labels:
+    app: projectservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: projectservice
+  template:
+    metadata:
+      labels:
+        app: projectservice
+    spec:
+      containers:
+      - name: projectservice
+        image: projectservice:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: CONFIGSERVER_URI
+          value: "http://configserver:8888"
+        - name: KAFKA_BROKER
+          value: "kafka:9092"
+        - name: EUREKA_SERVER_URI
+          value: "http://eurekaserver:8761/eureka/"

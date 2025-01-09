@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdfservice
+  labels:
+    app: pdfservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pdfservice
+  template:
+    metadata:
+      labels:
+        app: pdfservice
+    spec:
+      containers:
+      - name: pdfservice
+        image: pdfservice:latest
+        ports:
+        - containerPort: 8084
+        env:
+        - name: CONFIGSERVER_URI
+          value: "http://configserver:8888"
+        - name: KAFKA_BROKER
+          value: "kafka:9092"
+        - name: EUREKA_SERVER_URI
+          value: "http://eurekaserver:8761/eureka/"
