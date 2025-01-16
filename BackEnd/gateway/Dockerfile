@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy build files
-COPY target/gateway-0.0.1-SNAPSHOT.jar gateway.jar
+COPY target/app.jar gateway.jar
 
 # Expose the port the application will run on
 EXPOSE 8080
