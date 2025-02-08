@@ -1,10 +1,12 @@
 package projectmanager.domain;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import projectmanager.domain.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-//<<< PoEAA / Repository
-@RepositoryRestResource(collectionResourceRel = "users", path = "users")
-public interface UserRepository
-    extends PagingAndSortingRepository<User, Long> {}
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    // ✅ 이메일로 사용자 검색
+    Optional<User> findByEmail(String email);
+}

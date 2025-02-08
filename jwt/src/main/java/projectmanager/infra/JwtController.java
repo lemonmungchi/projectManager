@@ -1,23 +1,64 @@
 package projectmanager.infra;
 
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import projectmanager.domain.*;
-
-//<<< Clean Arch / Inbound Adaptor
+import projectmanager.service.JwtTokenProvider;
 
 @RestController
-// @RequestMapping(value="/jwts")
-@Transactional
+@RequestMapping("/jwt")
 public class JwtController {
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    JwtRepository jwtRepository;
+    public JwtController(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    // ✅ JWT 생성 API
+    @PostMapping("/generate")
+    public ResponseEntity<String> generateToken(@RequestBody TokenRequest request) {
+        String token = jwtTokenProvider.generateToken(request.getUserId(), request.getRole(), request.getEmail());
+        return ResponseEntity.ok(token);
+    }
+
+    // ✅ JWT 검증 API
+    @PostMapping("/validate")
+    public ResponseEntity<Boolean> validateToken(@RequestBody String token) {
+        boolean isValid = jwtTokenProvider.validateToken(token);
+        return ResponseEntity.ok(isValid);
+    }
+
+    // ✅ JWT 무효화 API (로그아웃)
+    @PostMapping("/invalidate")
+    public ResponseEntity<String> invalidateToken(@RequestBody String token) {
+        jwtTokenProvider.invalidateToken(token);
+        return ResponseEntity.ok("Token invalidated successfully.");
+    }
 }
-//>>> Clean Arch / Inbound Adaptor
+
+
+class TokenRequest {
+    private String userId;
+    private String role;
+    private String email;
+
+    // ✅ 기본 생성자 추가
+    public TokenRequest() {}
+
+    public TokenRequest(String userId, String role, String email) {
+        this.userId = userId;
+        this.role = role;
+        this.email = email;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}

@@ -1,18 +1,14 @@
 package projectmanager.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import projectmanager.config.kafka.KafkaProcessor;
-import projectmanager.domain.*;
+import projectmanager.domain.User;
+import projectmanager.domain.UserRepository;
 
-//<<< Clean Arch / Inbound Adaptor
 @Service
 @Transactional
 public class PolicyHandler {
@@ -23,34 +19,5 @@ public class PolicyHandler {
     @StreamListener(KafkaProcessor.INPUT)
     public void whatever(@Payload String eventString) {}
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='ValidationSuccessed'"
-    )
-    public void wheneverValidationSuccessed_ValidateUser(
-        @Payload ValidationSuccessed validationSuccessed
-    ) {
-        ValidationSuccessed event = validationSuccessed;
-        System.out.println(
-            "\n\n##### listener ValidateUser : " + validationSuccessed + "\n\n"
-        );
-
-        // Sample Logic //
-        User.validateUser(event);
-    }
-
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='JwtDeleted'"
-    )
-    public void wheneverJwtDeleted_DeleteJwt(@Payload JwtDeleted jwtDeleted) {
-        JwtDeleted event = jwtDeleted;
-        System.out.println(
-            "\n\n##### listener DeleteJwt : " + jwtDeleted + "\n\n"
-        );
-
-        // Sample Logic //
-        User.deleteJwt(event);
-    }
+    // ✅ 불필요한 JWT 관련 이벤트 리스너 제거
 }
-//>>> Clean Arch / Inbound Adaptor

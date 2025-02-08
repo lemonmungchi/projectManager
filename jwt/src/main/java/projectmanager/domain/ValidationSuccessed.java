@@ -1,21 +1,20 @@
 package projectmanager.domain;
 
-import java.time.LocalDate;
-import java.util.*;
 import lombok.*;
-import projectmanager.domain.*;
 import projectmanager.infra.AbstractEvent;
 
 //<<< DDD / Domain Event
 @Data
 @ToString
+@EqualsAndHashCode(callSuper = true) // ✅ 부모 클래스 고려
 public class ValidationSuccessed extends AbstractEvent {
 
     private Long id;
     private Boolean isValidate;
 
-    public ValidationSuccessed(Jwt aggregate) {
-        super(aggregate);
+    public ValidationSuccessed(Long id, Boolean isValidate) {
+        this.id = id;
+        this.isValidate = isValidate;
     }
 
     public ValidationSuccessed() {

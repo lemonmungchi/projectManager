@@ -1,16 +1,16 @@
 package projectmanager.domain;
 
-import java.util.*;
 import lombok.*;
-import projectmanager.domain.*;
 import projectmanager.infra.AbstractEvent;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 @ToString
 public class JwtGenerated extends AbstractEvent {
 
-    private Long id;
-    private String name;
-    private String email;
-    private Boolean isTokken;
+    private String token;
+
+    public JwtGenerated(String token) {
+        this.token = token;
+    }
 }

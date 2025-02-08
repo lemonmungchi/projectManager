@@ -1,18 +1,9 @@
 package projectmanager.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import javax.persistence.*;
 import lombok.Data;
 import projectmanager.UserApplication;
-import projectmanager.domain.JwtGenerated;
-import projectmanager.domain.UserLoginned;
-import projectmanager.domain.UserLogouted;
-import projectmanager.domain.UserNotified;
-import projectmanager.domain.UserRegistered;
 
 @Entity
 @Table(name = "User_table")
@@ -28,7 +19,7 @@ public class User {
 
     private String email;
 
-    private Boolean isTokken;
+    private String password; // ✅ 비밀번호 필드 추가
 
     private String role;
 
@@ -40,9 +31,6 @@ public class User {
         UserNotified userNotified = new UserNotified(this);
         userNotified.publishAfterCommit();
 
-        JwtGenerated jwtGenerated = new JwtGenerated(this);
-        jwtGenerated.publishAfterCommit();
-
         UserLoginned userLoginned = new UserLoginned(this);
         userLoginned.publishAfterCommit();
 
@@ -51,69 +39,8 @@ public class User {
     }
 
     public static UserRepository repository() {
-        UserRepository userRepository = UserApplication.applicationContext.getBean(
-            UserRepository.class
-        );
-        return userRepository;
+        return UserApplication.applicationContext.getBean(UserRepository.class);
     }
 
-    //<<< Clean Arch / Port Method
-    public static void validateUser(ValidationSuccessed validationSuccessed) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        User user = new User();
-        repository().save(user);
-
-        UserLoginned userLoginned = new UserLoginned(user);
-        userLoginned.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(validationSuccessed.get???()).ifPresent(user->{
-            
-            user // do something
-            repository().save(user);
-
-            UserLoginned userLoginned = new UserLoginned(user);
-            userLoginned.publishAfterCommit();
-
-         });
-        */
-
-    }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void deleteJwt(JwtDeleted jwtDeleted) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        User user = new User();
-        repository().save(user);
-
-        UserLogouted userLogouted = new UserLogouted(user);
-        userLogouted.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(jwtDeleted.get???()).ifPresent(user->{
-            
-            user // do something
-            repository().save(user);
-
-            UserLogouted userLogouted = new UserLogouted(user);
-            userLogouted.publishAfterCommit();
-
-         });
-        */
-
-    }
-    //>>> Clean Arch / Port Method
-
+    // ✅ 불필요한 JWT 관련 메서드 삭제
 }
-//>>> DDD / Aggregate Root

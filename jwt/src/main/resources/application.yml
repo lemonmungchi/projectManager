@@ -1,6 +1,12 @@
 server:
   port: 8080
 
+  
+jwt:
+  secret: "MySuperSecretKeyForJWTGenerationWith256Bits" # ✅ 실제 서비스에서는 환경 변수로 설정
+  expiration: 3600000 # 1시간 (밀리초)
+
+
 spring:
   application:
     name: jwt
@@ -80,5 +86,4 @@ spring:
         event-out:
           destination: projectmanager
           contentType: application/json
-
 
