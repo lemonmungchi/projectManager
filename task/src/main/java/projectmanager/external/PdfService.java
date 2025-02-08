@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "pdf ", url = "${api.url.pdf }")
+@FeignClient(name = "pdf", url = "${api.url.pdf}")
 public interface PdfService {
     @RequestMapping(method = RequestMethod.POST, path = "/pdfs")
     public void showPdf(@RequestBody Pdf pdf);

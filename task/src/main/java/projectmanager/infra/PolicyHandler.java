@@ -41,22 +41,6 @@ public class PolicyHandler {
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='ProjectDeleted'"
-    )
-    public void wheneverProjectDeleted_DeleteAllTasks(
-        @Payload ProjectDeleted projectDeleted
-    ) {
-        ProjectDeleted event = projectDeleted;
-        System.out.println(
-            "\n\n##### listener DeleteAllTasks : " + projectDeleted + "\n\n"
-        );
-
-        // Sample Logic //
-        Task.deleteAllTasks(event);
-    }
-
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
         condition = "headers['type']=='ProjectCreated'"
     )
     public void wheneverProjectCreated_AddDefaultTask(
