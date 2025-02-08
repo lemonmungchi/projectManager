@@ -56,11 +56,11 @@ public class Project {
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
 
-        projectmanager.external.Pdf pdf = new projectmanager.external.Pdf();
+        projectmanager.external.Task task = new projectmanager.external.Task();
         // mappings goes here
         ProjectApplication.applicationContext
-            .getBean(projectmanager.external.PdfService.class)
-            .showPdf(pdf);
+            .getBean(projectmanager.external.TaskService.class)
+            .updateTask(task);
 
         ProjectUpdated projectUpdated = new ProjectUpdated(this);
         projectUpdated.publishAfterCommit();

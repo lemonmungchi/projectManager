@@ -54,15 +54,6 @@ public class Task {
 
     @PreRemove
     public void onPreRemove() {
-        //Following code causes dependency to external APIs
-        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
-
-        projectmanager.external.Pdf pdf = new projectmanager.external.Pdf();
-        // mappings goes here
-        TaskApplication.applicationContext
-            .getBean(projectmanager.external.PdfService.class)
-            .showPdf(pdf);
-
         TaskCompleted taskCompleted = new TaskCompleted(this);
         taskCompleted.publishAfterCommit();
     }

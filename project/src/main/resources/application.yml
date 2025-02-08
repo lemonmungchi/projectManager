@@ -49,7 +49,6 @@ api:
   url: 
     project: localhost:8082 
     task: localhost:8083 
-    pdf : localhost:8085 
     
 
 server:
@@ -91,6 +90,5 @@ api:
   url: 
     project: project:8080 
     task: task:8080 
-    pdf : pdf :8080 
     
 

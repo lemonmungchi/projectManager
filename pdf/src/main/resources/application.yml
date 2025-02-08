@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: pdf 
+    name: pdf
 ---
 
 spring:
@@ -29,7 +29,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: pdf 
+          group: pdf
 #<<< EDA / Topic Name
           destination: projectmanager
 #>>> EDA / Topic Name
@@ -74,7 +74,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: pdf 
+          group: pdf
           destination: projectmanager
           contentType: application/json
         event-out:

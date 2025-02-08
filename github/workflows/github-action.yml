@@ -32,7 +32,7 @@ jobs:
           mvn clean package -f ./project/pom.xml
           mvn clean package -f ./task/pom.xml
           mvn clean package -f ./user/pom.xml
-          mvn clean package -f ./pdf /pom.xml
+          mvn clean package -f ./pdf/pom.xml
           mvn clean package -f ./norification/pom.xml
           mvn clean package -f ./github/pom.xml
           mvn clean package -f ./jwt/pom.xml
@@ -70,12 +70,12 @@ jobs:
       - name: Docker Build and push for Pdf
         uses: docker/build-push-action@v4
         with:
-          context: ./pdf 
+          context: ./pdf
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/pdf-:latest
-            ghcr.io/${{ github.repository }}/pdf-:${{ github.ref_name }}
+            ghcr.io/${{ github.repository }}/pdf:latest
+            ghcr.io/${{ github.repository }}/pdf:${{ github.ref_name }}
             
       - name: Docker Build and push for Norification
         uses: docker/build-push-action@v4

@@ -21,7 +21,7 @@ spring:
           uri: http://localhost:8084
           predicates:
             - Path=/users/**, 
-        - id: pdf 
+        - id: pdf
           uri: http://localhost:8085
           predicates:
             - Path=/pdfs/**, 
@@ -73,7 +73,7 @@ spring:
           uri: http://user:8080
           predicates:
             - Path=/users/**, 
-        - id: pdf 
+        - id: pdf
           uri: http://pdf:8080
           predicates:
             - Path=/pdfs/**, 

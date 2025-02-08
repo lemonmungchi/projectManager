@@ -123,22 +123,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pdf 
+  name: pdf
   labels:
-    app: pdf 
+    app: pdf
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pdf 
+      app: pdf
   template:
     metadata:
       labels:
-        app: pdf 
+        app: pdf
     spec:
       containers:
-        - name: pdf 
-          image: username/pdf :latest
+        - name: pdf
+          image: username/pdf:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -336,15 +336,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pdf 
+  name: pdf
   labels:
-    app: pdf 
+    app: pdf
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: pdf 
+    app: pdf
 
 
 ---
