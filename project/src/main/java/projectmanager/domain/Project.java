@@ -30,38 +30,27 @@ public class Project {
 
     private String dueDate;
 
-    private String taskCnt;
+    private Integer taskCnt;            //형변환(String->Integer)
 
-    private String completeTaskCnt;
+    private Integer completeTaskCnt;    //형변환(String->Integer)
 
     private String ownerId;
 
+    @PrePersist
+    public void onPrePersist() {
+        this.status = "미완료";
+        if (this.taskCnt == null) this.taskCnt = 0;
+        if (this.completeTaskCnt == null) this.completeTaskCnt = 0;
+    }
+
     @PostPersist
     public void onPostPersist() {
-        //Following code causes dependency to external APIs
-        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
-
-        projectmanager.external.Task task = new projectmanager.external.Task();
-        // mappings goes here
-        ProjectApplication.applicationContext
-            .getBean(projectmanager.external.TaskService.class)
-            .addTask(task);
-
         ProjectCreated projectCreated = new ProjectCreated(this);
         projectCreated.publishAfterCommit();
     }
 
     @PostUpdate
     public void onPostUpdate() {
-        //Following code causes dependency to external APIs
-        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
-
-        projectmanager.external.Task task = new projectmanager.external.Task();
-        // mappings goes here
-        ProjectApplication.applicationContext
-            .getBean(projectmanager.external.TaskService.class)
-            .updateTask(task);
-
         ProjectUpdated projectUpdated = new ProjectUpdated(this);
         projectUpdated.publishAfterCommit();
     }
@@ -79,53 +68,36 @@ public class Project {
         return projectRepository;
     }
 
-    //<<< Clean Arch / Port Method
+    //추가된 task개수 관리
     public static void updateTaskCnt(TaskAdded taskAdded) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Project project = new Project();
-        repository().save(project);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(taskAdded.get???()).ifPresent(project->{
+    
+        repository().findById(Long.valueOf(taskAdded.getProjectId())).ifPresent(project->{
             
-            project // do something
+            project.setTaskCnt(project.getTaskCnt()+1);
             repository().save(project);
 
-
          });
-        */
-
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
+    //완료된 task개수 관리
     public static void updateCompleteTaskCnt(TaskCompleted taskCompleted) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Project project = new Project();
-        repository().save(project);
-
-        */
-
-        /** Example 2:  finding and process
         
-
-        repository().findById(taskCompleted.get???()).ifPresent(project->{
+        repository().findById(Long.valueOf(taskCompleted.getProjectId())).ifPresent(project->{
             
-            project // do something
+            project.setCompleteTaskCnt(project.getCompleteTaskCnt()+1);
             repository().save(project);
 
-
          });
-        */
+    }
 
+    public void updateProject() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateProject'");
+    }
+
+    public void deleteProject() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteProject'");
     }
     //>>> Clean Arch / Port Method
 
