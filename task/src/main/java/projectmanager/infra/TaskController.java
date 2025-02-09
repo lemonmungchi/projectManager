@@ -36,5 +36,27 @@ public class TaskController {
         taskRepository.save(task);
         return task;
     }
+
+    @RequestMapping(
+            value = "/tasks/{id}/updatetask",
+            method = RequestMethod.PUT,
+            produces = "application/json;charset=UTF-8"
+    )
+    public Task updateTask(
+            @PathVariable(value = "id") Long id,
+            @RequestBody UpdateTaskCommand updateTaskCommand,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws Exception {
+        System.out.println("##### /task/updateTask  called #####");
+        Optional<Task> optionalTask = taskRepository.findById(id);
+
+        optionalTask.orElseThrow(() -> new Exception("No Entity Found"));
+        Task task = optionalTask.get();
+        task.updateTask(updateTaskCommand);
+
+        taskRepository.save(task);
+        return task;
+    }
 }
 //>>> Clean Arch / Inbound Adaptor

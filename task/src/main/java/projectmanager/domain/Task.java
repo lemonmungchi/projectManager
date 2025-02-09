@@ -167,12 +167,36 @@ public class Task {
 
         String formattedDateTime = now.format(formatter);
 
+        setName(addTaskCommand.getName());
+        setDescription(addTaskCommand.getDescription());
+        setPriority(addTaskCommand.getPriority());
+        // projectId를 종속시킬 방법을 찾아야함
         setProjectId(addTaskCommand.getId());
         setDueDate(formattedDateTime);
         setStatus("task 생성 완료");
 
         TaskAdded taskAdded = new TaskAdded(this);
         taskAdded.publishAfterCommit();
+    }
+
+    public void updateTask(UpdateTaskCommand updateTaskCommand) {
+        //implement business logic here:
+
+        // 현재 날짜와 시간 가져오기
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        String formattedDateTime = now.format(formatter);
+
+        setStatus("task 수정 완료");
+
+        setName(updateTaskCommand.getName());
+        setDescription(updateTaskCommand.getDescription());
+        setPriority(updateTaskCommand.getPriority());
+        setDueDate(formattedDateTime);
+
+        TaskUpdated taskUpdated = new TaskUpdated(this);
+        taskUpdated.publishAfterCommit();
     }
 
 }
