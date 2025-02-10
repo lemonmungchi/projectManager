@@ -36,9 +36,12 @@ public class Project {
 
     private String ownerId;
 
+    private String isCompleted;        //프로젝트 완료 여부
+
     @PrePersist
     public void onPrePersist() {
-        this.status = "미완료";
+        this.status = "생성완료";
+        this.isCompleted="false";
         if (this.taskCnt == null) this.taskCnt = 0;
         if (this.completeTaskCnt == null) this.completeTaskCnt = 0;
     }
@@ -51,12 +54,14 @@ public class Project {
 
     @PostUpdate
     public void onPostUpdate() {
+        this.status="수정완료";
         ProjectUpdated projectUpdated = new ProjectUpdated(this);
         projectUpdated.publishAfterCommit();
     }
 
     @PreRemove
     public void onPreRemove() {
+        this.status="삭제완료";
         ProjectDeleted projectDeleted = new ProjectDeleted(this);
         projectDeleted.publishAfterCommit();
     }
@@ -86,6 +91,12 @@ public class Project {
             
             project.setCompleteTaskCnt(project.getCompleteTaskCnt()+1);
             repository().save(project);
+
+            if(project.getCompleteTaskCnt()!=0) {
+                if ( project.getTaskCnt() == project.getCompleteTaskCnt() ) {
+                    project.setIsCompleted("true");
+                }
+            }
 
          });
     }

@@ -10,7 +10,7 @@ import projectmanager.infra.AbstractEvent;
 public class TaskAdded extends AbstractEvent {
 
     private Long id;
-    private String projectId;
+    private Long projectId;
     private String name;
     private String description;
     private String status;
