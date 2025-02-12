@@ -1,5 +1,7 @@
 version: '3.8'
+
 services:
+  # ✅ Zookeeper 설정
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -8,6 +10,7 @@ services:
     ports:
       - "2181:2181"
 
+  # ✅ Kafka 설정
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
@@ -16,9 +19,81 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
       - "9092:9092"
+
+  # ✅ Redis 추가 (토큰 무효화에 필요)
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # ✅ MySQL DB 추가
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: userdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u user -puserpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ✅ User 서비스 (Spring Boot)
+  user-service:
+    build:
+      context: "C:/Project/projectManager/user"
+    container_name: user-service
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis:  # ✅ Redis가 실행된 후 시작
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/userdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: userpassword
+      SPRING_REDIS_HOST: redis  # ✅ Redis 설정 추가
+      SPRING_REDIS_PORT: 6379
+    ports:
+      - "8081:8081"
+
+  # ✅ JWT 서비스 (토큰 발급)
+  jwt-service:
+    build:
+      context: "C:/Project/projectManager/jwt"  
+    container_name: jwt-service
+    depends_on:
+      - kafka
+      - redis  # ✅ Redis 실행 후 시작
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_REDIS_HOST: redis  # ✅ Redis 설정 추가
+      SPRING_REDIS_PORT: 6379
+    ports:
+      - "8082:8082"
+
+volumes:
+  mysql_data:
+  redis_data:  # ✅ Redis 볼륨 추가
+
+networks:
+  default:
+    driver: bridge

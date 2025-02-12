@@ -1,46 +1,38 @@
 package projectmanager.domain;
 
-import java.util.Date;
 import javax.persistence.*;
-import lombok.Data;
-import projectmanager.UserApplication;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 @Entity
-@Table(name = "User_table")
+@Table(name = "user_table")
 @Data
-//<<< DDD / Aggregate Root
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
-    private String password; // ✅ 비밀번호 필드 추가
+    @JsonProperty("password") 
+    @Column(nullable = false)
+    private String password;
 
+    @Column(nullable = false)
     private String role;
 
+    // ✅ 회원가입 후 이벤트 발생
     @PostPersist
     public void onPostPersist() {
-        UserRegistered userRegistered = new UserRegistered(this);
-        userRegistered.publishAfterCommit();
-
-        UserNotified userNotified = new UserNotified(this);
-        userNotified.publishAfterCommit();
-
-        UserLoginned userLoginned = new UserLoginned(this);
-        userLoginned.publishAfterCommit();
-
-        UserLogouted userLogouted = new UserLogouted(this);
-        userLogouted.publishAfterCommit();
+        new UserRegistered(this).publishAfterCommit();
+        new UserNotified(this).publishAfterCommit();
     }
-
-    public static UserRepository repository() {
-        return UserApplication.applicationContext.getBean(UserRepository.class);
-    }
-
-    // ✅ 불필요한 JWT 관련 메서드 삭제
 }
