@@ -38,6 +38,10 @@ public class Project {
 
     private String isCompleted;        //프로젝트 완료 여부
 
+    @ElementCollection
+    private List<Long> userId;         //프로젝트 참여자 리스트
+
+
     @PrePersist
     public void onPrePersist() {
         this.status = "생성완료";
@@ -54,14 +58,14 @@ public class Project {
 
     @PostUpdate
     public void onPostUpdate() {
-        this.status="수정완료";
+        this.status = "수정완료";
         ProjectUpdated projectUpdated = new ProjectUpdated(this);
         projectUpdated.publishAfterCommit();
     }
 
     @PreRemove
     public void onPreRemove() {
-        this.status="삭제완료";
+        this.status = "삭제완료";
         ProjectDeleted projectDeleted = new ProjectDeleted(this);
         projectDeleted.publishAfterCommit();
     }
@@ -90,7 +94,7 @@ public class Project {
         repository().findById(Long.valueOf(taskCompleted.getProjectId())).ifPresent(project->{
             
             project.setCompleteTaskCnt(project.getCompleteTaskCnt()+1);
-            repository().save(project);
+            
 
             if(project.getCompleteTaskCnt()!=0) {
                 if ( project.getTaskCnt() == project.getCompleteTaskCnt() ) {
@@ -98,19 +102,12 @@ public class Project {
                 }
             }
 
+            repository().save(project);
+
          });
     }
 
-    public void updateProject() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateProject'");
-    }
 
-    public void deleteProject() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteProject'");
-    }
-    //>>> Clean Arch / Port Method
 
 }
 //>>> DDD / Aggregate Root

@@ -2,6 +2,9 @@ package projectmanager.domain;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import javax.persistence.ElementCollection;
+
 import lombok.*;
 import projectmanager.domain.*;
 import projectmanager.infra.AbstractEvent;
@@ -16,8 +19,12 @@ public class ProjectCreated extends AbstractEvent {
     private String description;
     private String status;
     private String dueDate;
-    private String taskCnt;
-    private String completeTaskCnt;
+    private Integer taskCnt;
+    private Integer completeTaskCnt;
+    private String ownerId;
+    private String isCompleted;
+    private List<Long> userId;
+
 
     public ProjectCreated(Project aggregate) {
         super(aggregate);

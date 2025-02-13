@@ -16,8 +16,11 @@ public class ProjectUpdated extends AbstractEvent {
     private String description;
     private String status;
     private String dueDate;
-    private String taskCnt;
-    private String completeTaskCnt;
+    private Integer taskCnt;
+    private Integer completeTaskCnt;
+    private String ownerId;
+    private String isCompleted;
+    private List<Long> userId;
 
     public ProjectUpdated(Project aggregate) {
         super(aggregate);
