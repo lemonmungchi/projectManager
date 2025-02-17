@@ -13,7 +13,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update  # 🔹 테이블 자동 생성
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -37,21 +37,21 @@ spring:
   redis:
     host: redis
     port: 6379
-    timeout: 3000  # ✅ Redis 연결 타임아웃 설정 (3초)
+    timeout: 3000
     lettuce:
       pool:
-        max-active: 10  # ✅ 최대 연결 개수
-        max-idle: 5  # ✅ 최대 유휴 연결 개수
-        min-idle: 2  # ✅ 최소 유휴 연결 개수
-        time-between-eviction-runs: 1000ms  # ✅ 유휴 연결 검사 주기
+        max-active: 10
+        max-idle: 5
+        min-idle: 2
+        time-between-eviction-runs: 1000ms
 
 jwt:
   service:
-    url: "http://jwt-service:8082"
+    url: ${JWT_SERVICE_URL:http://jwt-service:8082}
 
 logging:
   level:
-    org.hibernate.type: trace
+    org.hibernate.SQL: debug
     org.springframework.cloud: debug
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"  # ✅ 로그 형식 추가
+    level: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
