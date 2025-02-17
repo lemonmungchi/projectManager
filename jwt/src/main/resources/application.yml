@@ -36,13 +36,32 @@ spring:
           destination: jwt-topic
           contentType: application/json
 
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+# ✅ JWT 관련 설정 (비밀키, 만료 시간, 발급자)
+jwt:
+  secret: ${JWT_SECRET:MySuperSecretKeyForJWTGenerationWith256Bits}  # 🔹 환경 변수 또는 기본값 사용
+  expiration: 3600000  # 🔹 1시간 (밀리초 단위)
+  issuer: projectmanager  # 🔹 토큰 발급자 설정
+
+# ✅ Feign Client 설정 (User 서비스에서 JWT 서비스 호출 시 적용)
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000  # 🔹 연결 타임아웃 (ms)
+        readTimeout: 5000     # 🔹 응답 타임아웃 (ms)
+        loggerLevel: full     # 🔹 요청/응답 로그 레벨
+
 logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
 
 ---
-# Docker 실행 환경 (프로필: docker)
+# ✅ Docker 실행 환경 (프로필: docker)
 spring:
   config:
     activate:
@@ -56,3 +75,7 @@ spring:
       kafka:
         binder:
           brokers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}  # ✅ Docker 네트워크에서 Kafka 접근 가능하도록 설정
+
+  redis:
+    host: redis
+    port: 6379

@@ -18,7 +18,8 @@ public class JwtTokenProvider {
 
     private static final Logger logger = Logger.getLogger(JwtTokenProvider.class.getName());
 
-    private String secretKey="MySuperSecretKeyForJWTGenerationWith256Bits";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     private static final long EXPIRATION_TIME = 60 * 60 * 1000; // 1시간
     private Key key;
