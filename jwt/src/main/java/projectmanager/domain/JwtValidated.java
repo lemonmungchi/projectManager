@@ -6,11 +6,13 @@ import projectmanager.infra.AbstractEvent;
 @EqualsAndHashCode(callSuper = false)
 @Data
 @ToString
-public class JwtGenerated extends AbstractEvent {
+public class JwtValidated extends AbstractEvent {
 
     private String token;
+    private boolean isValid;
 
-    public JwtGenerated(String token) {
+    public JwtValidated(String token, boolean isValid) {
         this.token = token;
+        this.isValid = isValid;
     }
 }

@@ -1,24 +1,24 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   application:
     name: jwt
----
+  profiles:
+    active: default
 
-spring:
-  profiles: default
   jpa:
     properties:
       hibernate:
         show_sql: true
         format_sql: true
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
+
   cloud:
     stream:
       kafka:
         binder:
-          brokers: localhost:9092
+          brokers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}  # ✅ 기본값은 로컬, Docker 환경 변수 사용 가능
         streams:
           binder:
             configuration:
@@ -30,55 +30,52 @@ spring:
       bindings:
         event-in:
           group: jwt
-#<<< EDA / Topic Name
-          destination: projectmanager
-#>>> EDA / Topic Name
+          destination: jwt-topic
           contentType: application/json
         event-out:
-#<<< EDA / Topic Name
-          destination: projectmanager
-#>>> EDA / Topic Name
+          destination: jwt-topic
           contentType: application/json
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+# ✅ JWT 관련 설정 (비밀키, 만료 시간, 발급자)
+jwt:
+  secret: ${JWT_SECRET:MySuperSecretKeyForJWTGenerationWith256Bits}  # 🔹 환경 변수 또는 기본값 사용
+  expiration: 3600000  # 🔹 1시간 (밀리초 단위)
+  issuer: projectmanager  # 🔹 토큰 발급자 설정
+
+# ✅ Feign Client 설정 (User 서비스에서 JWT 서비스 호출 시 적용)
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000  # 🔹 연결 타임아웃 (ms)
+        readTimeout: 5000     # 🔹 응답 타임아웃 (ms)
+        loggerLevel: full     # 🔹 요청/응답 로그 레벨
 
 logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
 
-
-server:
-  port: 8088
-
 ---
-
+# ✅ Docker 실행 환경 (프로필: docker)
 spring:
-  profiles: docker
-  jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
+  config:
+    activate:
+      on-profile: docker
+
+  server:
+    port: 8082  # ✅ Docker에서도 명확한 포트 지정
+
   cloud:
     stream:
       kafka:
         binder:
-          brokers: my-kafka:9092
-        streams:
-          binder:
-            configuration:
-              default:
-                key:
-                  serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-                value:
-                  serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-      bindings:
-        event-in:
-          group: jwt
-          destination: projectmanager
-          contentType: application/json
-        event-out:
-          destination: projectmanager
-          contentType: application/json
+          brokers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}  # ✅ Docker 네트워크에서 Kafka 접근 가능하도록 설정
 
-
+  redis:
+    host: redis
+    port: 6379

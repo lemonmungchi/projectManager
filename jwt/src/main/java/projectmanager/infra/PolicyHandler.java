@@ -1,42 +1,44 @@
 package projectmanager.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Service;
 import projectmanager.config.kafka.KafkaProcessor;
-import projectmanager.domain.*;
+import projectmanager.domain.JwtValidated;
+import projectmanager.service.JwtTokenProvider;
 
-//<<< Clean Arch / Inbound Adaptor
 @Service
 @Transactional
 public class PolicyHandler {
 
     @Autowired
-    JwtRepository jwtRepository;
+    JwtTokenProvider jwtTokenProvider;
 
     @StreamListener(KafkaProcessor.INPUT)
     public void whatever(@Payload String eventString) {}
 
+    // ✅ JWT 삭제 이벤트 처리 (블랙리스트 등록)
     @StreamListener(
         value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='JwtGenerated'"
+        condition = "headers['type']=='JwtDeleted'"
     )
-    public void wheneverJwtGenerated_Validate(
-        @Payload JwtGenerated jwtGenerated
-    ) {
-        JwtGenerated event = jwtGenerated;
-        System.out.println(
-            "\n\n##### listener Validate : " + jwtGenerated + "\n\n"
-        );
+    public void handleJwtDeleted(@Payload String token) {
+        System.out.println("🔴 JWT 삭제 요청 수신: " + token);
+        jwtTokenProvider.invalidateToken(token); // ✅ 토큰 무효화
+        System.out.println("✅ JWT 블랙리스트에 추가 완료");
+    }
 
-        // Sample Logic //
-        Jwt.validate(event);
+    // ✅ JWT 검증 이벤트 처리 (Kafka를 통한 중앙 인증)
+    @StreamListener(
+        value = KafkaProcessor.INPUT,
+        condition = "headers['type']=='JwtValidated'"
+    )
+    public void handleJwtValidation(@Payload String token) {
+        boolean isValid = jwtTokenProvider.validateToken(token);
+        JwtValidated event = new JwtValidated(token, isValid);
+        event.publish(); // ✅ 검증 결과 이벤트 발행
+        System.out.println("🟢 JWT 검증 완료: " + token + " → 유효: " + isValid);
     }
 }
-//>>> Clean Arch / Inbound Adaptor

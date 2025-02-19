@@ -1,119 +1,38 @@
 package projectmanager.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import javax.persistence.*;
-import lombok.Data;
-import projectmanager.UserApplication;
-import projectmanager.domain.JwtGenerated;
-import projectmanager.domain.UserLoginned;
-import projectmanager.domain.UserLogouted;
-import projectmanager.domain.UserNotified;
-import projectmanager.domain.UserRegistered;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 @Entity
-@Table(name = "User_table")
+@Table(name = "user_table")
 @Data
-//<<< DDD / Aggregate Root
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
-    private Boolean isTokken;
+    @JsonProperty("password") 
+    @Column(nullable = false)
+    private String password;
 
+    @Column(nullable = false)
     private String role;
 
+    // ✅ 회원가입 후 이벤트 발생
     @PostPersist
     public void onPostPersist() {
-        UserRegistered userRegistered = new UserRegistered(this);
-        userRegistered.publishAfterCommit();
-
-        UserNotified userNotified = new UserNotified(this);
-        userNotified.publishAfterCommit();
-
-        JwtGenerated jwtGenerated = new JwtGenerated(this);
-        jwtGenerated.publishAfterCommit();
-
-        UserLoginned userLoginned = new UserLoginned(this);
-        userLoginned.publishAfterCommit();
-
-        UserLogouted userLogouted = new UserLogouted(this);
-        userLogouted.publishAfterCommit();
+        new UserRegistered(this).publishAfterCommit();
+        new UserNotified(this).publishAfterCommit();
     }
-
-    public static UserRepository repository() {
-        UserRepository userRepository = UserApplication.applicationContext.getBean(
-            UserRepository.class
-        );
-        return userRepository;
-    }
-
-    //<<< Clean Arch / Port Method
-    public static void validateUser(ValidationSuccessed validationSuccessed) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        User user = new User();
-        repository().save(user);
-
-        UserLoginned userLoginned = new UserLoginned(user);
-        userLoginned.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(validationSuccessed.get???()).ifPresent(user->{
-            
-            user // do something
-            repository().save(user);
-
-            UserLoginned userLoginned = new UserLoginned(user);
-            userLoginned.publishAfterCommit();
-
-         });
-        */
-
-    }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void deleteJwt(JwtDeleted jwtDeleted) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        User user = new User();
-        repository().save(user);
-
-        UserLogouted userLogouted = new UserLogouted(user);
-        userLogouted.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(jwtDeleted.get???()).ifPresent(user->{
-            
-            user // do something
-            repository().save(user);
-
-            UserLogouted userLogouted = new UserLogouted(user);
-            userLogouted.publishAfterCommit();
-
-         });
-        */
-
-    }
-    //>>> Clean Arch / Port Method
-
 }
-//>>> DDD / Aggregate Root
